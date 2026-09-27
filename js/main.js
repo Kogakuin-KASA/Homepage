@@ -13,17 +13,6 @@ const NOTE_CONFIG = {
   defaultThumbnail: './assets/images/workshop_machining.jpg' // サムネイルがない場合の画像
 };
 
-// ==========================================
-// 2. 公式 X (Twitter) 連携設定
-// ==========================================
-// 公式Xのアカウント設定。ポスト内容の追加やアカウント変更がここから行えます。
-const X_CONFIG = {
-  username: 'KASA85501732', // Xのユーザー名 (@KASA85501732)
-  displayName: '工学院大学 宇宙開発プロジェクト KASA',
-  profileUrl: 'https://x.com/KASA85501732',
-  avatar: './assets/images/kasa_icon.png'
-};
-
 document.addEventListener('DOMContentLoaded', () => {
   // 1. Header scroll effect
   const header = document.querySelector('.header');
