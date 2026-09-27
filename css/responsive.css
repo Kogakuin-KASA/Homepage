@@ -1,0 +1,251 @@
+/* ==========================================================================
+   KASA - Responsive Stylesheet (Tablet, Mobile)
+   ========================================================================== */
+
+/* コンテナ左右の余白が 30px 未満になる幅では、横方向のスライドインが画面をはみ出すため縦方向のフェードに統一 */
+@media (max-width: 1260px) {
+  .reveal-ready .fade-init.fade-left:not(.is-visible),
+  .reveal-ready .fade-init.fade-right:not(.is-visible) {
+    transform: translateY(28px);
+  }
+}
+
+@media (max-width: 1024px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .divisions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  
+  .news-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .footer-top {
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --header-height: 64px;
+  }
+
+  .pc-only {
+    display: none !important;
+  }
+
+  .sp-only {
+    display: inline !important;
+  }
+  
+  .section {
+    padding: 3.75rem 0;
+  }
+  
+  .section-title {
+    font-size: 1.85rem;
+  }
+  
+  .section-header {
+    margin-bottom: 2.5rem;
+  }
+
+  /* Navigation Mobile Menu */
+  .mobile-toggle {
+    display: block;
+  }
+  
+  .nav-links {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--color-border);
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.5rem;
+    gap: 1.25rem;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-120%);
+    transition: transform var(--transition-normal);
+    z-index: 999;
+  }
+  
+  .nav-links.active {
+    transform: translateY(0);
+  }
+  
+  .nav-actions .btn {
+    display: none;
+  }
+  
+  /* Hero */
+  .hero {
+    padding-top: calc(var(--header-height) + 2rem);
+    padding-bottom: 3.5rem;
+  }
+  
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  
+  .hero-title {
+    font-size: 2.15rem;
+  }
+  
+  .hero-desc {
+    font-size: 1rem;
+  }
+  
+  .hero-stat-floating {
+    position: static;
+    margin-top: 1rem;
+  }
+  
+  .hero-main-img {
+    height: 280px;
+  }
+  
+  /* About */
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  
+  .about-features {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Divisions */
+  .divisions-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Timeline */
+  .timeline::before {
+    left: 16px;
+  }
+  
+  .timeline-dot {
+    left: 7px;
+    width: 18px;
+    height: 18px;
+  }
+  
+  .timeline-item {
+    padding-left: 42px;
+    margin-bottom: 2rem;
+  }
+  
+  .timeline-content {
+    padding: 1.25rem;
+  }
+  
+  /* News */
+  .news-grid {
+    grid-template-columns: 1fr;
+  }
+
+  
+  /* Recruit */
+  .recruit-card {
+    padding: 2rem 1.5rem;
+  }
+  
+  .recruit-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .faculty-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  /* Contact */
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  
+  .contact-form {
+    padding: 1.5rem;
+  }
+  
+  /* Footer */
+  .footer-top {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.85rem;
+  }
+  
+  .hero-cta {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .hero-cta .btn {
+    width: 100%;
+  }
+  
+  .hero-trust-badges {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .about-gallery {
+    grid-template-columns: 1fr;
+  }
+  
+  .about-gallery-item:first-child {
+    grid-column: span 1;
+    height: 180px;
+  }
+  
+  .about-gallery-item {
+    height: 160px;
+  }
+  
+  .sponsor-banner {
+    padding: 2rem 1.25rem;
+  }
+
+  .x-actions {
+    gap: 0.6rem;
+  }
+
+  .faculty-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Crowdfunding Notification Bar Responsive (Mobile) */
+  .cf-teaser-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .cf-teaser-link {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+
