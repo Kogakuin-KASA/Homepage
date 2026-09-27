@@ -74,7 +74,7 @@ git push -u origin main
 本サイトは **note の RSS フィードを利用して、note に投稿した最新記事を自動的に取得・表示する機能** を備えています。
 
 - **note のアカウントIDを変更・設定する場合：**
-  [js/main.js](file:///c:/Users/shusu/Downloads/HP/HP/js/main.js) の先頭にある以下の設定を編集してください：
+  [js/main.js](js/main.js) の先頭にある以下の設定を編集してください：
   ```javascript
   const NOTE_CONFIG = {
     creatorId: 'kasa_kogakuin', // あなたの note ID (https://note.com/<ここ>)
@@ -89,7 +89,7 @@ git push -u origin main
 各カード（Xロゴ、タイトル、ポストを見るリンク）をクリックすると、実際のXポスト（個別ステータスURL）へ直接ジャンプします。
 
 - **公式Xアカウントの設定：**
-  [js/main.js](file:///c:/Users/shusu/Downloads/HP/HP/js/main.js) の先頭にある `X_CONFIG` でアカウント情報を設定します：
+  [js/main.js](js/main.js) の先頭にある `X_CONFIG` でアカウント情報を設定します：
   ```javascript
   const X_CONFIG = {
     username: 'KASA85501732', // Xのユーザー名 (@KASA85501732)
