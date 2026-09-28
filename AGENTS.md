@@ -122,6 +122,7 @@ note の RSS を rss2json 経由で取得し、最新3件をニュース欄の�
 - **グリッドの子要素:** 長いメールアドレスなどでグリッドの列が広がらないよう、`min-width: 0` を付けている。
 - **外部から来る文字の扱い:** note の記事（rss2json 経由）など外部から来た値は `innerHTML` に入れない。`createElement` と `textContent` で組み立てる（`main.js` の `loadNoteFeed()`）。本文に HTML のコード例が書かれているだけでスクリプトが動く恐れがあるため。
 - **CSP:** `index.html` と `404.html` の `<meta http-equiv="Content-Security-Policy">` で、読み込み・通信してよい相手を限定している。外部サービス（埋め込み、解析ツール、別のフォームなど）を追加したら、ここにも許可先を足す。足さないとブラウザに止められ、コンソールに CSP 違反が出る。インラインの `<script>` や `onclick="..."` は動かないので、JS は `js/main.js` に書く。
+- **アクセス解析:** Cloudflare Web Analytics（Cookie なし）を `index.html` と `404.html` の `</body>` 直前で読み込んでいる。閲覧数は部のアカウントで Cloudflare のダッシュボード → Web Analytics から見る。広告ブロッカー利用者は数えられないので実際より少なめに出る。フッターに利用の告知あり。
 - **お問い合わせフォーム:** FormSubmit（`https://formsubmit.co/ajax/kogakuin.kasa@gmail.com`）に送信する（有効化済み）。送信先を変えるときは `index.html` の `<form action>` と `main.js` 内の複数箇所を書き換え、新しいアドレスで「Activate Form」メールの承認が必要。送信に失敗したときは mailto のボタンに切り替わる。
 - **公開URLに依存する箇所:** リポジトリ名の変更や独自ドメインへの移行でURLが変わったら、次も直す。
   - `index.html` の `<meta property="og:image">` と `<meta property="og:url">`（絶対URL）
