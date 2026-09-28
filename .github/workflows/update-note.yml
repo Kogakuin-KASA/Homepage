@@ -1,0 +1,53 @@
+# note の最新記事を1時間ごとに取得し、data/note.json に変化があればコミットする。
+# GitHub の「Actions」タブ → 「note記事の更新」→「Run workflow」で手動実行もできる。
+# 注意：リポジトリに60日間更新がないと GitHub がこの定期実行を止める。
+#       止まったら Actions タブで「Enable workflow」を押して再開する。
+name: note記事の更新
+
+on:
+  schedule:
+    - cron: "17 * * * *" # 毎時17分（UTC）。混雑しやすい0分台を避ける
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: update-note
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: note の RSS を取得
+        run: python scripts/fetch_note.py
+
+      - name: 変化があればコミット
+        id: commit
+        run: |
+          if git diff --quiet -- data/note.json; then
+            echo "変化なし"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/note.json
+          git commit -m "note記事の一覧を更新"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      # GITHUB_TOKEN による push では Pages の再公開が走らない場合があるため、明示的に依頼する
+      - name: GitHub Pages を再公開
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds" || echo "Pages の再公開依頼に失敗（push による自動公開を待つ）"

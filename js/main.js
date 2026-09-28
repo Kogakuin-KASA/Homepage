@@ -5,10 +5,10 @@
 // ==========================================
 // 1. Note (ブログ) 連携設定
 // ==========================================
-// noteアカウントを開設したら、以下の creatorId を変更するだけで
-// ホームページ上に自動的に最新のnote記事が表示されます！
+// note 記事は GitHub Actions（.github/workflows/update-note.yml）が1時間ごとに取得し、
+// data/note.json に書き出す。アカウントを変えるときは scripts/fetch_note.py の CREATOR_ID を書き換える。
 const NOTE_CONFIG = {
-  creatorId: 'kasa_kogakuin', // noteのクリエイターID (https://note.com/<creatorId>)
+  dataUrl: './data/note.json', // 取得済みの記事一覧
   maxCount: 3,              // 表示する最大記事数
   defaultThumbnail: './assets/images/workshop_machining.jpg' // サムネイルがない場合の画像
 };
@@ -242,10 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const noteContainer = document.getElementById('noteArticlesContainer');
     if (!noteContainer) return;
 
-    const rssUrl = `https://note.com/${encodeURIComponent(NOTE_CONFIG.creatorId)}/rss`;
-    const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-
-    // 外部（rss2json・note）から来た値は信用せず、HTML として解釈させない。
+    // note から来た値は信用せず、HTML として解釈させない。
     // innerHTML は使わず、要素を組み立てて textContent で文字として入れる。
     const isSafeUrl = (value, prefix) => {
       try {
@@ -263,11 +260,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     try {
-      const response = await fetch(apiUrl);
+      // 公開のたびに最新を取りに行く（ブラウザの古いキャッシュを使わない）
+      const response = await fetch(NOTE_CONFIG.dataUrl, { cache: 'no-cache' });
       if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
 
-      if (data.status === 'ok' && Array.isArray(data.items) && data.items.length > 0) {
+      if (Array.isArray(data.items) && data.items.length > 0) {
         // 既存のプレースホルダーをクリア
         noteContainer.replaceChildren();
 
@@ -279,26 +277,14 @@ document.addEventListener('DOMContentLoaded', () => {
         articles.forEach(item => {
           const title = String(item.title || '');
 
-          // 日付の整形 (YYYY.MM.DD)。不正な日付なら表示しない
-          const dateObj = new Date(item.pubDate);
-          const hasDate = !isNaN(dateObj.getTime());
-          const year = dateObj.getFullYear();
-          const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-          const day = String(dateObj.getDate()).padStart(2, '0');
+          // 日付は取得スクリプトが日本時間の YYYY-MM-DD で書き出している
+          const dateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(item.date || ''));
 
-          // 本文をテキスト化。DOMParser で作った文書ではスクリプトや onerror は実行されない
-          const doc = new DOMParser().parseFromString(String(item.description || ''), 'text/html');
-
-          // サムネイルの抽出（https の画像のみ使う）
-          const thumbCandidates = [
-            item.thumbnail,
-            item.enclosure && item.enclosure.link,
-            doc.querySelector('img') && doc.querySelector('img').getAttribute('src')
-          ];
-          const thumb = thumbCandidates.find(url => isSafeUrl(url, 'https://')) || NOTE_CONFIG.defaultThumbnail;
+          // サムネイル（note の見出し画像。https の画像のみ使う）
+          const thumb = isSafeUrl(item.thumbnail, 'https://') ? item.thumbnail : NOTE_CONFIG.defaultThumbnail;
 
           // 本文の抜粋
-          const cleanText = (doc.body.textContent || '').replace(/\s+/g, ' ').trim();
+          const cleanText = String(item.excerpt || '');
           const snippet = cleanText.length > 85 ? cleanText.substring(0, 85) + '...' : cleanText;
 
           // カード要素の作成
@@ -322,7 +308,8 @@ document.addEventListener('DOMContentLoaded', () => {
           const category = el('span', 'news-category category-note');
           category.append(el('span', 'note-dot'), 'note');
           meta.appendChild(category);
-          if (hasDate) {
+          if (dateMatch) {
+            const [, year, month, day] = dateMatch;
             const time = el('time', '', `${year}.${month}.${day}`);
             time.dateTime = `${year}-${month}-${day}`;
             meta.appendChild(time);

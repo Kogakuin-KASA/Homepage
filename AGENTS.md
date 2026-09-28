@@ -72,7 +72,10 @@ index.html          メインページ（全セクションを1ページに収�
 css/style.css       デザイン全般（色などは :root の CSS 変数）
 css/responsive.css  〜1260px / 〜1024px / 〜768px / 〜480px の調整
 js/main.js          メニュー、現在地ハイライト、写真の拡大表示、ニュースの絞り込み、
-                    note 記事の自動取得、お問い合わせフォーム送信
+                    note 記事の表示、お問い合わせフォーム送信
+data/note.json      note の最新記事一覧（自動生成。手で編集しない）
+scripts/fetch_note.py  note の RSS から data/note.json を作る
+.github/workflows/  上のスクリプトを1時間ごとに実行する GitHub Actions
 assets/images/      写真・ロゴ
 ```
 
@@ -95,7 +98,13 @@ assets/images/      写真・ロゴ
 3. クリックで拡大表示させるなら `data-preview-img="画像パス" data-title="タイトル" data-desc="説明"` を付ける。キーボード操作（tabindex・Enter）は main.js が自動で付与する。
 
 ### note（活動ブログ）
-note の RSS を rss2json 経由で取得し、最新3件をニュース欄の先頭に自動表示する（サイトの編集は不要）。記事が0件のあいだ、note の絞り込みでは「準備中です」と表示される。設定は `js/main.js` 先頭の `NOTE_CONFIG`。
+GitHub Actions（`.github/workflows/update-note.yml`）が1時間ごとに note の RSS を取得し、`data/note.json` に変化があればコミットする。サイトはこのファイルを読み、最新3件をニュース欄の先頭に表示する（サイトの編集は不要。投稿から最大1時間ほどで反映）。
+
+- 見出し画像はサムネイルに、本文の冒頭は抜粋になる。日付は日本時間。
+- すぐ反映したいときは GitHub の **Actions** タブ →「note記事の更新」→「Run workflow」。
+- **リポジトリに60日間更新がないと、GitHub がこの定期実行を止める。** 止まっていたら Actions タブで「Enable workflow」を押す。
+- 記事が0件のあいだ、note の絞り込みでは「準備中です」と表示される。
+- 取得処理は `scripts/fetch_note.py`（note のアカウントIDは `CREATOR_ID`）、表示は `js/main.js` の `loadNoteFeed()`。
 
 ## 写真の中身（ファイル名と中身が一致しないものに注意）
 
@@ -120,7 +129,7 @@ note の RSS を rss2json 経由で取得し、最新3件をニュース欄の�
 - **横方向のアニメーション:** `.fade-left` / `.fade-right` は `translateX(30px)` で登場する。画面幅 1260px 以下では横にはみ出すため、`responsive.css` で縦方向の動きに置き換えている。横方向に動く要素を追加するときは、スマホ幅でのはみ出しを確認する。
 - **現在地ハイライト:** セクションの高さに依存しないよう、スクロール位置で判定している（`main.js`）。IntersectionObserver のしきい値方式に戻すと、スマホで縦長のセクションが判定されなくなる。
 - **グリッドの子要素:** 長いメールアドレスなどでグリッドの列が広がらないよう、`min-width: 0` を付けている。
-- **外部から来る文字の扱い:** note の記事（rss2json 経由）など外部から来た値は `innerHTML` に入れない。`createElement` と `textContent` で組み立てる（`main.js` の `loadNoteFeed()`）。本文に HTML のコード例が書かれているだけでスクリプトが動く恐れがあるため。
+- **外部から来る文字の扱い:** note の記事など外部から来た値は `innerHTML` に入れない。`createElement` と `textContent` で組み立てる（`main.js` の `loadNoteFeed()`）。本文に HTML のコード例が書かれているだけでスクリプトが動く恐れがあるため。
 - **CSP:** `index.html` と `404.html` の `<meta http-equiv="Content-Security-Policy">` で、読み込み・通信してよい相手を限定している。外部サービス（埋め込み、解析ツール、別のフォームなど）を追加したら、ここにも許可先を足す。足さないとブラウザに止められ、コンソールに CSP 違反が出る。インラインの `<script>` や `onclick="..."` は動かないので、JS は `js/main.js` に書く。
 - **アクセス解析:** Cloudflare Web Analytics（Cookie なし）を `index.html` と `404.html` の `</body>` 直前で読み込んでいる。閲覧数は部のアカウントで Cloudflare のダッシュボード → Web Analytics から見る。広告ブロッカー利用者は数えられないので実際より少なめに出る。フッターに利用の告知あり。
 - **お問い合わせフォーム:** FormSubmit（`https://formsubmit.co/ajax/kogakuin.kasa@gmail.com`）に送信する（有効化済み）。送信先を変えるときは `index.html` の `<form action>` と `main.js` 内の複数箇所を書き換え、新しいアドレスで「Activate Form」メールの承認が必要。送信に失敗したときは mailto のボタンに切り替わる。
