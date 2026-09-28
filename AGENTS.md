@@ -94,6 +94,7 @@ assets/images/      写真・ロゴ
 
 ### 写真を追加・差し替える
 1. `assets/images/` に保存する（位置情報を除去すること）。
+   部員が撮っていない画像（素材サイト、NASA、AI生成など）は、出典と使ってよい根拠（ライセンス・規約）を下の「写真の中身」の表に書く。出典が分からない画像は使わない。
 2. `<img>` の `src` と `alt`（写っている内容の説明）を設定する。
 3. クリックで拡大表示させるなら `data-preview-img="画像パス" data-title="タイトル" data-desc="説明"` を付ける。キーボード操作（tabindex・Enter）は main.js が自動で付与する。
 
@@ -111,7 +112,7 @@ GitHub Actions（`.github/workflows/update-note.yml`）が1時間ごとに note 
 | ファイル | 実際に写っているもの | 使用箇所 |
 |---|---|---|
 | `kasa_logo.png` / `kasa_icon.png` | 公式ロゴ | ヘッダー、フッター、Xカード、favicon |
-| `space_earth_moon_bg.jpg` | 地球と月面 | ヒーロー・フッターの背景（CSS） |
+| `earthrise_apollo8.jpg` | 月の地平線から昇る地球（Apollo 8「Earthrise」AS08-14-2383、NASA。パブリックドメイン、フッターにクレジット表記） | ヒーロー・フッターの背景（CSS） |
 | `izu_hybrid_launch.jpg` | 伊豆大島の打上げ準備（ランチャー） | ヒーロー、2019年、SNSシェア画像 |
 | `workshop_machining.jpg` | フライス盤での加工 | About、note記事の代替サムネイル |
 | `rocket_manufacture.jpg` | ⚠️ モデルロケットの打上げ（製作風景ではない） | About |

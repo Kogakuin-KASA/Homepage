@@ -359,7 +359,7 @@ button, input, textarea, select {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('../assets/images/space_earth_moon_bg.jpg');
+  background-image: url('../assets/images/earthrise_apollo8.jpg');
   background-size: cover;
   background-position: center 30%;
   opacity: 0.22;
@@ -1707,7 +1707,7 @@ button, input, textarea, select {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('../assets/images/space_earth_moon_bg.jpg');
+  background-image: url('../assets/images/earthrise_apollo8.jpg');
   background-size: cover;
   background-position: center 25%;
   opacity: 0.25;
