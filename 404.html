@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 読み込み・通信してよい相手を限定する（XSS 対策の保険）。外部サービスを追加したらここにも追記する -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https: data:; connect-src https://api.rss2json.com https://formsubmit.co; form-action https://formsubmit.co mailto:; base-uri 'self'; object-src 'none'">
   <!-- 404 ページは存在しない任意の階層のURLで表示されるため、相対パスの基準をサイトのトップに固定する。
        リポジトリ名を変更した場合はここも書き換えてください -->
   <base href="/Homepage/">

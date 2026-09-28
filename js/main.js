@@ -245,67 +245,96 @@ document.addEventListener('DOMContentLoaded', () => {
     const rssUrl = `https://note.com/${encodeURIComponent(NOTE_CONFIG.creatorId)}/rss`;
     const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
 
+    // 外部（rss2json・note）から来た値は信用せず、HTML として解釈させない。
+    // innerHTML は使わず、要素を組み立てて textContent で文字として入れる。
+    const isSafeUrl = (value, prefix) => {
+      try {
+        return typeof value === 'string' && new URL(value).href.startsWith(prefix);
+      } catch (e) {
+        return false;
+      }
+    };
+
+    const el = (tag, className, text) => {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    };
+
     try {
       const response = await fetch(apiUrl);
       if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
 
-      if (data.status === 'ok' && data.items && data.items.length > 0) {
+      if (data.status === 'ok' && Array.isArray(data.items) && data.items.length > 0) {
         // 既存のプレースホルダーをクリア
-        noteContainer.innerHTML = '';
+        noteContainer.replaceChildren();
 
-        const articles = data.items.slice(0, NOTE_CONFIG.maxCount);
+        // note の記事URL以外（javascript: など）はカードにしない
+        const articles = data.items
+          .filter(item => isSafeUrl(item.link, 'https://note.com/'))
+          .slice(0, NOTE_CONFIG.maxCount);
 
         articles.forEach(item => {
-          // 日付の整形 (YYYY.MM.DD)
+          const title = String(item.title || '');
+
+          // 日付の整形 (YYYY.MM.DD)。不正な日付なら表示しない
           const dateObj = new Date(item.pubDate);
+          const hasDate = !isNaN(dateObj.getTime());
           const year = dateObj.getFullYear();
           const month = String(dateObj.getMonth() + 1).padStart(2, '0');
           const day = String(dateObj.getDate()).padStart(2, '0');
-          const dateStr = `${year}.${month}.${day}`;
 
-          // サムネイルの抽出
-          let thumb = item.thumbnail;
-          if (!thumb && item.enclosure && item.enclosure.link) {
-            thumb = item.enclosure.link;
-          }
-          if (!thumb && item.description) {
-            const imgMatch = item.description.match(/<img[^>]+src=["']([^"']+)["']/);
-            if (imgMatch) thumb = imgMatch[1];
-          }
-          if (!thumb) {
-            thumb = NOTE_CONFIG.defaultThumbnail;
-          }
+          // 本文をテキスト化。DOMParser で作った文書ではスクリプトや onerror は実行されない
+          const doc = new DOMParser().parseFromString(String(item.description || ''), 'text/html');
 
-          // 本文の抜粋（HTMLタグ除去）
-          const tempDiv = document.createElement('div');
-          tempDiv.innerHTML = item.description || '';
-          const cleanText = (tempDiv.textContent || tempDiv.innerText || '').trim();
+          // サムネイルの抽出（https の画像のみ使う）
+          const thumbCandidates = [
+            item.thumbnail,
+            item.enclosure && item.enclosure.link,
+            doc.querySelector('img') && doc.querySelector('img').getAttribute('src')
+          ];
+          const thumb = thumbCandidates.find(url => isSafeUrl(url, 'https://')) || NOTE_CONFIG.defaultThumbnail;
+
+          // 本文の抜粋
+          const cleanText = (doc.body.textContent || '').replace(/\s+/g, ' ').trim();
           const snippet = cleanText.length > 85 ? cleanText.substring(0, 85) + '...' : cleanText;
 
           // カード要素の作成
-          const card = document.createElement('article');
-          card.className = 'news-card fade-init';
+          const card = el('article', 'news-card fade-init');
           card.setAttribute('data-category', 'note');
 
-          card.innerHTML = `
-            <div class="news-card-img-wrapper">
-              <img src="${thumb}" alt="${item.title}" class="news-card-img" loading="lazy" onerror="this.src='${NOTE_CONFIG.defaultThumbnail}'">
-            </div>
-            <div class="news-body">
-              <div class="news-meta">
-                <span class="news-category category-note">
-                  <span class="note-dot"></span>note
-                </span>
-                <time datetime="${dateObj.toISOString().split('T')[0]}">${dateStr}</time>
-              </div>
-              <h3 class="news-title">${item.title}</h3>
-              <p class="news-snippet">${snippet}</p>
-              <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="news-link link-note">
-                noteで読む &rarr;
-              </a>
-            </div>
-          `;
+          const imgWrapper = el('div', 'news-card-img-wrapper');
+          const img = el('img', 'news-card-img');
+          img.src = thumb;
+          img.alt = title;
+          img.loading = 'lazy';
+          img.addEventListener('error', () => {
+            if (img.getAttribute('src') !== NOTE_CONFIG.defaultThumbnail) {
+              img.src = NOTE_CONFIG.defaultThumbnail;
+            }
+          });
+          imgWrapper.appendChild(img);
+
+          const body = el('div', 'news-body');
+          const meta = el('div', 'news-meta');
+          const category = el('span', 'news-category category-note');
+          category.append(el('span', 'note-dot'), 'note');
+          meta.appendChild(category);
+          if (hasDate) {
+            const time = el('time', '', `${year}.${month}.${day}`);
+            time.dateTime = `${year}-${month}-${day}`;
+            meta.appendChild(time);
+          }
+
+          const link = el('a', 'news-link link-note', 'noteで読む →');
+          link.href = item.link;
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+
+          body.append(meta, el('h3', 'news-title', title), el('p', 'news-snippet', snippet), link);
+          card.append(imgWrapper, body);
 
           noteContainer.appendChild(card);
           if (revealObserver) {
@@ -317,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
         applyCurrentFilter();
       }
     } catch (err) {
-      console.log('Note feed note available yet, keeping default fallback cards:', err);
+      console.log('Note feed not available yet, keeping default fallback cards:', err);
     }
   }
 

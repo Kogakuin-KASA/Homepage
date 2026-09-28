@@ -4,6 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 読み込み・通信してよい相手を限定する（XSS 対策の保険）。外部サービスを追加したらここにも追記する -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https: data:; connect-src https://api.rss2json.com https://formsubmit.co; form-action https://formsubmit.co mailto:; base-uri 'self'; object-src 'none'">
   <title>工学院大学 宇宙開発プロジェクト KASA | 公式ウェブサイト</title>
   <meta name="description"
     content="工学院大学公認学生プロジェクト「宇宙開発プロジェクトKASA (Kogakuin AeroSpace Adventurers)」の公式ホームページ。ハイブリッドロケットや小型模擬人工衛星（CanSat）の開発・打ち上げ、新歓・メンバー募集、活動実績をご紹介します。"
@@ -455,15 +457,13 @@
           <span class="section-badge">News & Blog</span>
           <h2 class="section-title">最新情報・活動ブログ</h2>
           <p class="section-desc">
-            プロジェクトの公式発表や、公式noteで執筆している日々の開発記録をお届けします。<br>
-
+            公式noteの活動ブログと、公式Xの最新ポストをお届けします。
           </p>
         </div>
 
         <!-- Category Filter Tabs -->
         <div class="news-filter fade-init" role="group" aria-label="記事カテゴリー">
           <button class="filter-btn active" data-filter="all" aria-pressed="true">すべて</button>
-          <button class="filter-btn" data-filter="news" aria-pressed="false">お知らせ</button>
           <button class="filter-btn btn-note" data-filter="note" aria-pressed="false">活動ブログ (note)</button>
           <button class="filter-btn btn-x" data-filter="x" aria-pressed="false">
             <svg class="btn-x-icon" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
@@ -476,56 +476,8 @@
         </div>
 
         <div class="news-grid" id="newsGrid">
-          <!-- 2026年度 八王子祭出店のお知らせ (News) -->
-          <article class="news-card fade-init delay-1" data-category="news">
-            <div class="news-body">
-              <div class="news-meta">
-                <span class="news-category">イベント</span>
-                <time datetime="2026-09-21">2026.09.21</time>
-              </div>
-              <h3 class="news-title">2026年度 八王子祭に出店（8番ブース）</h3>
-              <p class="news-snippet">
-                今年度の八王子祭にKASAが出店いたします！8番ブースにて、今年は香ばしい「焼きトウモロコシ」を販売します。皆様のお越しを心よりお待ちしております！
-              </p>
-              <a href="https://x.com/KASA85501732" target="_blank" rel="noopener noreferrer" class="news-link">
-                公式Xで詳しく見る &rarr;
-              </a>
-            </div>
-          </article>
-
-          <!-- 1. 公式お知らせ (News) -->
-          <article class="news-card fade-init delay-1" data-category="news">
-            <div class="news-body">
-              <div class="news-meta">
-                <span class="news-category">お知らせ</span>
-                <time datetime="2026-04-04">2026.04.04</time>
-              </div>
-              <h3 class="news-title">宇宙開発プロジェクト2026年度 始動</h3>
-              <p class="news-snippet">
-                今年度のプロジェクト予算が確定し、前年度より増額となりました。新機体の設計・開発および新入生歓迎に向けた準備を進めてまいります。
-              </p>
-              <a href="https://x.com/KASA85501732" target="_blank" rel="noopener noreferrer" class="news-link">
-                公式Xで詳しく見る &rarr;
-              </a>
-            </div>
-          </article>
-
-          <!-- 2. 公式お知らせ (News) -->
-          <article class="news-card fade-init delay-2" data-category="news">
-            <div class="news-body">
-              <div class="news-meta">
-                <span class="news-category">イベント</span>
-                <time datetime="2024-11-27">2024.11.27</time>
-              </div>
-              <h3 class="news-title">第62回八王子祭に出展・参加しました</h3>
-              <p class="news-snippet">
-                八王子キャンパスで開催された学園祭にて出展を行い、多くの来場者や地域の方々に私たちのロケット製作活動をご紹介しました。
-              </p>
-              <a href="https://x.com/KASA85501732" target="_blank" rel="noopener noreferrer" class="news-link">
-                公式Xで詳しく見る &rarr;
-              </a>
-            </div>
-          </article>
+          <!-- 公式note：最新記事（JavaScriptで自動取得・挿入） -->
+          <div id="noteArticlesContainer" style="display: contents;"></div>
 
           <!-- 公式X：直近3件（新しい順） -->
           <!-- 1. Xポスト (2026.09.26) -->
@@ -773,8 +725,6 @@
             </div>
           </article>
 
-          <!-- 4. Note 記事コンテナ（JavaScriptで最新記事を自動取得・挿入） -->
-          <div id="noteArticlesContainer" style="display: contents;"></div>
         </div>
 
         <!-- 絞り込み結果が0件のときに表示（文言は main.js で切り替え） -->
