@@ -133,6 +133,9 @@ GitHub Actions（`.github/workflows/update-note.yml`）が1時間ごとに note 
 - **CSP:** `index.html` と `404.html` の `<meta http-equiv="Content-Security-Policy">` で、読み込み・通信してよい相手を限定している。外部サービス（埋め込み、解析ツール、別のフォームなど）を追加したら、ここにも許可先を足す。足さないとブラウザに止められ、コンソールに CSP 違反が出る。インラインの `<script>` や `onclick="..."` は動かないので、JS は `js/main.js` に書く。
 - **アクセス解析:** Cloudflare Web Analytics（Cookie なし）を `index.html` と `404.html` の `</body>` 直前で読み込んでいる。閲覧数は部のアカウントで Cloudflare のダッシュボード → Web Analytics から見る。広告ブロッカー利用者は数えられないので実際より少なめに出る。フッターに利用の告知あり。
 - **お問い合わせフォーム:** FormSubmit（`https://formsubmit.co/ajax/kogakuin.kasa@gmail.com`）に送信する（有効化済み）。送信先を変えるときは `index.html` の `<form action>` と `main.js` 内の複数箇所を書き換え、新しいアドレスで「Activate Form」メールの承認が必要。送信に失敗したときは mailto のボタンに切り替わる。
+- **検索エンジン対策:** Google Search Console に `https://kogakuin-kasa.github.io/Homepage/` を登録済み。所有確認は `index.html` の `<meta name="google-site-verification">` で行っているので**消さない**（消すと確認が外れる）。検索での表示回数や検索語は部のアカウントで Search Console から見る。`robots.txt` はドメイン直下にしか置けないため、このサイト（`/Homepage/` 以下）には置けない。
 - **公開URLに依存する箇所:** リポジトリ名の変更や独自ドメインへの移行でURLが変わったら、次も直す。
   - `index.html` の `<meta property="og:image">` と `<meta property="og:url">`（絶対URL）
+  - `index.html` の `<link rel="canonical">` と団体情報（`application/ld+json` 内の `url`・`logo`）
+  - `sitemap.xml` の `<loc>`（Search Console でサイトマップを送信し直す。URLが変わると Search Console の登録もやり直し）
   - `404.html` の `<base href="/Homepage/">`（ユーザーサイト `Kogakuin-KASA.github.io` にした場合は `/`）
