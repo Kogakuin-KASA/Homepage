@@ -101,7 +101,8 @@ note の RSS を rss2json 経由で取得し、最新3件を自動表示する�
 
 | ファイル | 実際に写っているもの | 使用箇所 |
 |---|---|---|
-| `kasa_logo.png` / `kasa_icon.png` | 公式ロゴ | ヘッダー、フッター、Xカード、favicon |
+| `kasa_logo.png` / `kasa_icon.png` | 公式ロゴ | ヘッダー、フッター、Xカード |
+| `favicon.jpg`（ルート直下） | 公式ロゴ（白背景・正方形） | favicon（index.html / 404.html） |
 | `space_earth_moon_bg.jpg` | 地球と月面 | ヒーロー・フッターの背景（CSS） |
 | `izu_hybrid_launch.jpg` | 伊豆大島の打上げ準備（ランチャー） | ヒーロー、2019年、SNSシェア画像 |
 | `workshop_machining.jpg` | フライス盤での加工 | About、note記事の代替サムネイル |
