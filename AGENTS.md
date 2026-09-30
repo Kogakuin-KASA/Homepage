@@ -27,12 +27,12 @@
 **AIエージェントは作業を始める前に、今日の日付と「最終確認日」を比べる。7日以上空いていたら、依頼された作業に入る前にユーザーへ「X の確認から始めてよいか」を聞き、了承されたら次の手順で更新する。**
 
 1. https://x.com/KASA85501732 を開き、「最新ポスト」より新しいポストを探す。
-   - 実際のブラウザで開くと、ログインしていなくても最新の数件と数値（リポスト・いいね・表示回数）が読める。ブラウザツールやWeb取得機能を使えばAIエージェント側で直接閲覧可能。
-   - サーバーから単純なHTTPで取ってくるツールは拒否されることがあるが、ブラウザ機能であればプロフィールや個別ポスト（`/status/<ID>`）を問題なく読み取れる。
+   - 実際のブラウザで開くと、ログインしていなくても最新の数件と数値（リポスト・いいね・表示回数）が読める。ブラウザを操作できるツールがあれば使う。
+   - サーバーからページを直接取得する方法（HTTP で取ってくるだけのツール）は、X に拒否されることが多い。
    - プロフィールに出ないポストは、ポストのURL（`/status/<ID>`）を直接開けば読める。
    - 本文は X に表示されているとおりに写す。絵文字や言葉を足さない。
    - 日付は日本時間で書く。
-   - それでもポストを読めないときは、ユーザーにポストのURL・本文・画像・数値を貼ってもらう。
+   - ポストを読めないときは、ユーザーにポストのURL・本文・画像・数値を貼ってもらう。
 2. 新しいポストがあれば、「X のポストを載せる」の手順でニュース欄に追加する。
    - Xカードは**直近3件**だけを新しい順に載せる。固定ポストは載せない。
    - 3件からはみ出したカードは削除し、そのカードの画像ファイルも `assets/images/` から削除する（リポジトリが膨らむのを防ぐため）。削除前に、ほかの場所で使われていないか検索して確かめる。
@@ -61,7 +61,7 @@ git push
 - [ ] 画像のリンク切れがない
 - [ ] コンソールにエラーが出ていない
 - [ ] ナビのリンクで各セクションへ移動し、現在地のハイライトが追従する
-- [ ] ニュースの絞り込み（すべて / note / X）が正しく動く
+- [ ] ニュースの絞り込み（すべて / お知らせ / note / X）が正しく動く
 - [ ] 追加した写真がクリックと Enter キーで拡大表示でき、Esc で閉じる
 
 ## ファイル構成
@@ -72,20 +72,17 @@ index.html          メインページ（全セクションを1ページに収�
 css/style.css       デザイン全般（色などは :root の CSS 変数）
 css/responsive.css  〜1260px / 〜1024px / 〜768px / 〜480px の調整
 js/main.js          メニュー、現在地ハイライト、写真の拡大表示、ニュースの絞り込み、
-                    note 記事の表示、お問い合わせフォーム送信
-data/note.json      note の最新記事一覧（自動生成。手で編集しない）
-scripts/fetch_note.py  note の RSS から data/note.json を作る
-.github/workflows/  上のスクリプトを1時間ごとに実行する GitHub Actions
+                    note 記事の自動取得、お問い合わせフォーム送信
 assets/images/      写真・ロゴ
 ```
 
 ## よくある編集
 
-### ニュース欄の構成
-ニュース欄に載せるのは **note と X の2種類だけ**。お知らせ・イベント告知も note に記事として書く（サイトに直接カードを追加しない）。
+### お知らせを追加する
+`index.html` の `<div class="news-grid" id="newsGrid">` 内にある `<article class="news-card ..." data-category="news">` を複製し、日付（`<time datetime="YYYY-MM-DD">` と表示テキスト）、タイトル、本文、リンクを書き換える。新しいものを上に置く。
 
 ### X のポストを載せる
-`index.html` の `<div class="news-grid" id="newsGrid">` 内の `<article class="news-card card-x ..." data-category="x">` を複製して書き換える。
+同じく `newsGrid` 内の `<article class="news-card card-x ..." data-category="x">` を複製して書き換える。
 
 - 本文、ハッシュタグ、日付
 - ポストのURL `https://x.com/KASA85501732/status/<ID>`（ロゴとリンクの2か所）
@@ -94,25 +91,18 @@ assets/images/      写真・ロゴ
 
 ### 写真を追加・差し替える
 1. `assets/images/` に保存する（位置情報を除去すること）。
-   部員が撮っていない画像（素材サイト、NASA、AI生成など）は、出典と使ってよい根拠（ライセンス・規約）を下の「写真の中身」の表に書く。出典が分からない画像は使わない。
 2. `<img>` の `src` と `alt`（写っている内容の説明）を設定する。
 3. クリックで拡大表示させるなら `data-preview-img="画像パス" data-title="タイトル" data-desc="説明"` を付ける。キーボード操作（tabindex・Enter）は main.js が自動で付与する。
 
 ### note（活動ブログ）
-GitHub Actions（`.github/workflows/update-note.yml`）が1時間ごとに note の RSS を取得し、`data/note.json` に変化があればコミットする。サイトはこのファイルを読み、最新3件をニュース欄の先頭に表示する（サイトの編集は不要。投稿から最大1時間ほどで反映）。
-
-- 見出し画像はサムネイルに、本文の冒頭は抜粋になる。日付は日本時間。
-- すぐ反映したいときは GitHub の **Actions** タブ →「note記事の更新」→「Run workflow」。
-- **リポジトリに60日間更新がないと、GitHub がこの定期実行を止める。** 止まっていたら Actions タブで「Enable workflow」を押す。
-- 記事が0件のあいだ、note の絞り込みでは「準備中です」と表示される。
-- 取得処理は `scripts/fetch_note.py`（note のアカウントIDは `CREATOR_ID`）、表示は `js/main.js` の `loadNoteFeed()`。
+note の RSS を rss2json 経由で取得し、最新3件を自動表示する。記事が0件のあいだ、note の絞り込みでは「準備中です」と表示される。設定は `js/main.js` 先頭の `NOTE_CONFIG`。
 
 ## 写真の中身（ファイル名と中身が一致しないものに注意）
 
 | ファイル | 実際に写っているもの | 使用箇所 |
 |---|---|---|
 | `kasa_logo.png` / `kasa_icon.png` | 公式ロゴ | ヘッダー、フッター、Xカード、favicon |
-| `earthrise_apollo8.jpg` | 月の地平線から昇る地球（Apollo 8「Earthrise」AS08-14-2383、NASA。パブリックドメイン、フッターにクレジット表記） | ヒーロー・フッターの背景（CSS） |
+| `space_earth_moon_bg.jpg` | 地球と月面 | ヒーロー・フッターの背景（CSS） |
 | `izu_hybrid_launch.jpg` | 伊豆大島の打上げ準備（ランチャー） | ヒーロー、2019年、SNSシェア画像 |
 | `workshop_machining.jpg` | フライス盤での加工 | About、note記事の代替サムネイル |
 | `rocket_manufacture.jpg` | ⚠️ モデルロケットの打上げ（製作風景ではない） | About |
@@ -130,13 +120,7 @@ GitHub Actions（`.github/workflows/update-note.yml`）が1時間ごとに note 
 - **横方向のアニメーション:** `.fade-left` / `.fade-right` は `translateX(30px)` で登場する。画面幅 1260px 以下では横にはみ出すため、`responsive.css` で縦方向の動きに置き換えている。横方向に動く要素を追加するときは、スマホ幅でのはみ出しを確認する。
 - **現在地ハイライト:** セクションの高さに依存しないよう、スクロール位置で判定している（`main.js`）。IntersectionObserver のしきい値方式に戻すと、スマホで縦長のセクションが判定されなくなる。
 - **グリッドの子要素:** 長いメールアドレスなどでグリッドの列が広がらないよう、`min-width: 0` を付けている。
-- **外部から来る文字の扱い:** note の記事など外部から来た値は `innerHTML` に入れない。`createElement` と `textContent` で組み立てる（`main.js` の `loadNoteFeed()`）。本文に HTML のコード例が書かれているだけでスクリプトが動く恐れがあるため。
-- **CSP:** `index.html` と `404.html` の `<meta http-equiv="Content-Security-Policy">` で、読み込み・通信してよい相手を限定している。外部サービス（埋め込み、解析ツール、別のフォームなど）を追加したら、ここにも許可先を足す。足さないとブラウザに止められ、コンソールに CSP 違反が出る。インラインの `<script>` や `onclick="..."` は動かないので、JS は `js/main.js` に書く。
-- **アクセス解析:** Cloudflare Web Analytics（Cookie なし）を `index.html` と `404.html` の `</body>` 直前で読み込んでいる。閲覧数は部のアカウントで Cloudflare のダッシュボード → Web Analytics から見る。広告ブロッカー利用者は数えられないので実際より少なめに出る。フッターに利用の告知あり。
 - **お問い合わせフォーム:** FormSubmit（`https://formsubmit.co/ajax/kogakuin.kasa@gmail.com`）に送信する（有効化済み）。送信先を変えるときは `index.html` の `<form action>` と `main.js` 内の複数箇所を書き換え、新しいアドレスで「Activate Form」メールの承認が必要。送信に失敗したときは mailto のボタンに切り替わる。
-- **検索エンジン対策:** Google Search Console に `https://kogakuin-kasa.github.io/Homepage/` を登録済み。所有確認は `index.html` の `<meta name="google-site-verification">` で行っているので**消さない**（消すと確認が外れる）。検索での表示回数や検索語は部のアカウントで Search Console から見る。`robots.txt` はドメイン直下にしか置けないため、このサイト（`/Homepage/` 以下）には置けない。
 - **公開URLに依存する箇所:** リポジトリ名の変更や独自ドメインへの移行でURLが変わったら、次も直す。
   - `index.html` の `<meta property="og:image">` と `<meta property="og:url">`（絶対URL）
-  - `index.html` の `<link rel="canonical">` と団体情報（`application/ld+json` 内の `url`・`logo`）
-  - `sitemap.xml` の `<loc>`（Search Console でサイトマップを送信し直す。URLが変わると Search Console の登録もやり直し）
   - `404.html` の `<base href="/Homepage/">`（ユーザーサイト `Kogakuin-KASA.github.io` にした場合は `/`）

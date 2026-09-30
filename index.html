@@ -2,14 +2,15 @@
 <html lang="ja">
 
 <head>
+  <link rel="icon" type="image/jpeg" href="./favicon.jpg">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- 読み込み・通信してよい相手を限定する（XSS 対策の保険）。外部サービスを追加したらここにも追記する -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https: data:; connect-src 'self' https://formsubmit.co https://cloudflareinsights.com; form-action https://formsubmit.co mailto:; base-uri 'self'; object-src 'none'">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https: data:; connect-src 'self' https://formsubmit.co https://cloudflareinsights.com; form-action https://formsubmit.co mailto:; base-uri 'self'; object-src 'none'">
   <title>工学院大学 宇宙開発プロジェクト KASA | 公式ウェブサイト</title>
   <meta name="description"
-    content="工学院大学公認学生プロジェクト「宇宙開発プロジェクトKASA (Kogakuin AeroSpace Adventurers)」の公式ホームページ。ハイブリッドロケットや小型模擬人工衛星（CanSat）の開発・打ち上げ、新歓・メンバー募集、活動実績をご紹介します。"
-   >
+    content="工学院大学公認学生プロジェクト「宇宙開発プロジェクトKASA (Kogakuin AeroSpace Adventurers)」の公式ホームページ。ハイブリッドロケットや小型模擬人工衛星（CanSat）の開発・打ち上げ、新歓・メンバー募集、活動実績をご紹介します。">
   <!-- 検索エンジン向け：正式なURL・Search Console の所有確認・団体情報（公開URLを変えたらここも直す） -->
   <link rel="canonical" href="https://kogakuin-kasa.github.io/Homepage/">
   <meta name="google-site-verification" content="50pHejcUz2tNm6KC64peGvhKu09fayoUeTcWGyj_zXg">
@@ -46,8 +47,7 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="工学院大学 宇宙開発プロジェクト KASA | 公式ウェブサイト">
   <meta property="og:description"
-    content="工学院大学公認学生プロジェクト「宇宙開発プロジェクトKASA (Kogakuin AeroSpace Adventurers)」の公式ホームページ。ハイブリッドロケットや小型模擬人工衛星（CanSat）の開発・打ち上げ、新歓・メンバー募集、活動実績をご紹介します。"
-   >
+    content="工学院大学公認学生プロジェクト「宇宙開発プロジェクトKASA (Kogakuin AeroSpace Adventurers)」の公式ホームページ。ハイブリッドロケットや小型模擬人工衛星（CanSat）の開発・打ち上げ、新歓・メンバー募集、活動実績をご紹介します。">
   <!-- 公開URLを変更した場合（リポジトリ名の変更など）は og:image / og:url も書き換えてください -->
   <meta property="og:image" content="https://kogakuin-kasa.github.io/Homepage/assets/images/izu_hybrid_launch.jpg">
   <meta property="og:url" content="https://kogakuin-kasa.github.io/Homepage/">
@@ -277,9 +277,9 @@
               <span class="gallery-tag">モデルロケット打上げ</span>
             </div>
             <div class="about-gallery-item fade-init fade-scale delay-3">
-              <img src="./assets/images/izu_hybrid_rocket.jpg" alt="ホワイトボードでハイブリッドエンジンの構成を検討するメンバー" class="about-gallery-img"
-                data-preview-img="./assets/images/izu_hybrid_rocket.jpg" data-title="ハイブリッドエンジン設計ミーティング"
-                data-desc="ホワイトボードに燃焼室や酸化剤（N₂O）供給系の構成を描きながら、エンジン設計を議論する様子。">
+              <img src="./assets/images/izu_hybrid_rocket.jpg" alt="ホワイトボードでハイブリッドエンジンの構成を検討するメンバー"
+                class="about-gallery-img" data-preview-img="./assets/images/izu_hybrid_rocket.jpg"
+                data-title="ハイブリッドエンジン設計ミーティング" data-desc="ホワイトボードに燃焼室や酸化剤（N₂O）供給系の構成を描きながら、エンジン設計を議論する様子。">
               <span class="gallery-tag">エンジン設計ミーティング</span>
             </div>
           </div>
@@ -1100,7 +1100,9 @@
   </div>
 
   <script src="./js/main.js"></script>
-  <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "c15ec96f50614032b60dcbf9a7a672b3"}'></script><!-- End Cloudflare Web Analytics -->
+  <!-- Cloudflare Web Analytics -->
+  <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js'
+    data-cf-beacon='{"token": "c15ec96f50614032b60dcbf9a7a672b3"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 
 </html>
