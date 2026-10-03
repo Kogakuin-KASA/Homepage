@@ -102,7 +102,8 @@ note の RSS を rss2json 経由で取得し、最新3件を自動表示する�
 | ファイル | 実際に写っているもの | 使用箇所 |
 |---|---|---|
 | `kasa_logo.png` / `kasa_icon.png` | 公式ロゴ | ヘッダー、フッター、Xカード |
-| `favicon.jpg`（ルート直下） | 公式ロゴ（白背景・正方形） | favicon（index.html / 404.html） |
+| `favicon.ico` / `favicon-*.png` / `apple-touch-icon.png` | 公式ロゴ（白背景・48倍数正方形） | favicon（Google検索・ブラウザ用） |
+| `favicon.jpg`（ルート直下） | 公式ロゴ（白背景・正方形） | 旧favicon（互換用） |
 | `space_earth_moon_bg.jpg` | 地球と月面 | ヒーロー・フッターの背景（CSS） |
 | `izu_hybrid_launch.jpg` | 伊豆大島の打上げ準備（ランチャー） | ヒーロー、2019年、SNSシェア画像 |
 | `workshop_machining.jpg` | フライス盤での加工 | About、note記事の代替サムネイル |
@@ -124,4 +125,5 @@ note の RSS を rss2json 経由で取得し、最新3件を自動表示する�
 - **お問い合わせフォーム:** FormSubmit（`https://formsubmit.co/ajax/kogakuin.kasa@gmail.com`）に送信する（有効化済み）。送信先を変えるときは `index.html` の `<form action>` と `main.js` 内の複数箇所を書き換え、新しいアドレスで「Activate Form」メールの承認が必要。送信に失敗したときは mailto のボタンに切り替わる。
 - **公開URLに依存する箇所:** リポジトリ名の変更や独自ドメインへの移行でURLが変わったら、次も直す。
   - `index.html` の `<meta property="og:image">` と `<meta property="og:url">`（絶対URL）
+  - `index.html` の構造化データ（JSON-LD）の `"url"`（WebSite / Organization）
   - `404.html` の `<base href="/Homepage/">`（ユーザーサイト `Kogakuin-KASA.github.io` にした場合は `/`）
