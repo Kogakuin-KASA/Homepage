@@ -34,9 +34,10 @@
    - 日付は日本時間で書く。
    - ポストを読めないときは、ユーザーにポストのURL・本文・画像・数値を貼ってもらう。
 2. 新しいポストがあれば、「X のポストを載せる」の手順でニュース欄に追加する。
-   - Xカードは**直近3件**だけを新しい順に載せる。固定ポストは載せない。
+   - Xカードは**写真付きの具体的な活動報告ポストを優先して直近3件**だけを新しい順に載せる。固定ポストは載せない。
+   - 画像のないつぶやき・日常の質問・告知済み情報（例: 「燃焼試験の音対策...」「（´-`）.｡oO」シリーズ、note/HP開設の告知など）は掲載をスキップし、表の「載せないと判断したポスト」に理由とともに記録する。
    - 3件からはみ出したカードは削除し、そのカードの画像ファイルも `assets/images/` から削除する（リポジトリが膨らむのを防ぐため）。削除前に、ほかの場所で使われていないか検索して確かめる。
-   - 画像は `x_post_YYYYMMDD.jpg`（投稿日）で保存し、長辺1200px程度に縮める。位置情報も消す。
+   - 画像は `x_post_YYYYMMDD.jpg`（同日に複数ある場合は `x_post_YYYYMMDD_班名.jpg` など）で保存し、長辺1200px程度に縮める。位置情報（EXIF GPS）も完全に消去する（後述のスクリプト参照）。
 3. リポスト・返信だけのものや、部の活動と関係の薄いものは載せない（数に入れない）。迷ったらユーザーに聞く。載せないと決めたポストは上の表に書く。
 4. 載っているカードの数値も、今の値に更新する。
 5. 新しいポストがなくても「最終確認日」を今日の日付に更新する。追加したら「最新ポスト」も更新する。
@@ -84,10 +85,32 @@ assets/images/      写真・ロゴ
 ### X のポストを載せる
 同じく `newsGrid` 内の `<article class="news-card card-x ..." data-category="x">` を複製して書き換える。
 
-- 本文、ハッシュタグ、日付
+- 本文、ハッシュタグ、日付（本文は X に表示されているとおり。絵文字や言葉を足さない）
 - ポストのURL `https://x.com/KASA85501732/status/<ID>`（ロゴとリンクの2か所）
 - 画像（`assets/images/x_post_YYYYMMDD.jpg` などで保存し、`src` と `data-preview-img` を変更）
 - 返信・リポスト・いいね・表示回数は手入力（自動更新されない）
+
+#### 画像の最適化・EXIF除去手順（Python / Pillow）
+ダウンロードした画像は位置情報（EXIF GPS）を除去し、長辺1200px程度にリサイズして保存する。
+```python
+from PIL import Image
+
+def process_image(src_path, dst_path):
+    with Image.open(src_path) as img:
+        if img.mode != 'RGB':
+            img = img.convert('RGB')
+        w, h = img.size
+        max_dim = max(w, h)
+        if max_dim > 1200:
+            scale = 1200 / max_dim
+            img = img.resize((int(w * scale), int(h * scale)), Image.Resampling.LANCZOS)
+        # EXIFを含まない新規Imageを作成して保存
+        clean_img = Image.new(img.mode, img.size)
+        clean_img.putdata(list(img.getdata()))
+        clean_img.save(dst_path, 'JPEG', quality=85, optimize=True)
+```
+
+- **Windows / PowerShellでの注意点:** ポスト本文に絵文字（☺など）が含まれている場合、PowerShellの標準出力（CP932）で文字コードエラーが発生することがある。スクリプト実行時やテキスト処理時はUTF-8でファイル出力・読み込みを行うこと。
 
 ### 写真を追加・差し替える
 1. `assets/images/` に保存する（位置情報を除去すること）。
