@@ -1274,6 +1274,59 @@ button, input, textarea, select {
   transform: scale(1.04);
 }
 
+/* 動画ポスト用の再生オーバーレイとバッジ */
+.x-card-video-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.15);
+  transition: background var(--transition-fast);
+}
+
+.news-card.card-x:hover .x-card-video-overlay {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.x-card-play-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.75);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform var(--transition-fast), background var(--transition-fast);
+}
+
+.news-card.card-x:hover .x-card-play-btn {
+  transform: scale(1.08);
+  background: rgba(2, 132, 199, 0.9);
+}
+
+.x-card-play-btn svg {
+  margin-left: 3px;
+}
+
+.x-card-video-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  padding: 2px 7px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 4px;
+  letter-spacing: 0.02em;
+}
+
 .x-card-footer {
   display: flex;
   align-items: center;
